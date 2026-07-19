@@ -1,0 +1,9 @@
+# Consistent line endings: store and check out text files as LF everywhere
+# (matches the Linux CI; avoids CRLF/LF diff noise on Windows).
+* text=auto eol=lf
+
+# Binary assets — never apply line-ending conversion.
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.ico   binary

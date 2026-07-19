@@ -1,0 +1,68 @@
+name: CI & Deploy
+
+# Run on every push to main, and on every pull request targeting main.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Permissions the deploy job needs to publish to GitHub Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys run at once.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  # ── Gate: tests + build must pass ──────────────────────────────
+  test:
+    name: Tests + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc   # uses Node 24 (our pinned version)
+          cache: npm
+      - run: npm ci                   # clean install from package-lock
+      - run: npm run test:unit        # Vitest unit tests
+      - run: npm run build            # type-check + production build
+      - run: npx playwright install --with-deps
+      - run: npm run test:e2e         # Playwright E2E across 5 browser configs (E2E half of the gate)
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # ── Deploy: only if `test` fully passed, only on main ──────────
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: test                       # ← THE STRICT GATE: no deploy unless test passed
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v6
+        with:
+          enablement: true            # turn on Pages automatically if it isn't already
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist                  # the built site
+      - id: deployment
+        uses: actions/deploy-pages@v5
