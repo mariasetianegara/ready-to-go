@@ -1,0 +1,573 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Ready to Go — Garden design system
+   Tokens + component styles. Mobile-first; scales to desktop.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color ── */
+  --bg:              #f1ede4;  /* Ivory      — page background           */
+  --surface:         #fbf8f1;  /* Linen      — cards, header, modal       */
+  --surface-2:       #ffffff;  /* Pure white — used sparingly (modal lift)*/
+  --ink:             #2a3326;  /* Green ink  — primary text               */
+  --ink-muted:       #7d8a72;  /* secondary text                         */
+  --ink-faint:       #b5b09e;  /* tertiary / hint                        */
+  --rule:            #e3decf;  /* Clay       — borders, dividers          */
+  --rule-soft:       #ece6d4;  /* softer rule, top shadow                */
+
+  --blush:           #e1a4a8;  /* primary accent — actions, focus        */
+  --blush-deep:      #b97b80;  /* pressed/hover                          */
+  --blush-soft:      #f3d9db;  /* tinted accent surface                  */
+  --sage:            #c9d8b5;  /* success — packed badge bg              */
+  --sage-deep:       #324123;  /* packed badge text                      */
+  --clay:            #e3decf;  /* tertiary fill                          */
+
+  --packed-bg:       #ebe7dc;  /* packed card background                 */
+  --packed-rule:     #ddd7c5;  /* packed card border                     */
+  --scrim:           rgba(42, 51, 38, 0.36); /* modal scrim              */
+
+  /* ── Type ── */
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body:    'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Sizes (mobile-first) */
+  --t-display:  44px;   /* hero / celebration                            */
+  --t-title:    24px;   /* app title in header                           */
+  --t-h2:       20px;   /* modal title                                   */
+  --t-h3:       16px;   /* section / large body                          */
+  --t-body:     15px;   /* card labels                                   */
+  --t-small:    13px;   /* counter, modal body                           */
+  --t-mini:     11px;   /* badge, micro-meta                             */
+
+  /* ── Spacing (4-pt) ── */
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  20px;
+  --s-6:  24px;
+  --s-8:  32px;
+  --s-12: 48px;
+  --s-16: 64px;
+
+  /* ── Radius ── */
+  --r-sm:    8px;
+  --r-md:   12px;
+  --r-lg:   16px;   /* cards                                            */
+  --r-xl:   20px;   /* modal                                            */
+  --r-pill: 999px;
+
+  /* ── Shadow ── */
+  --shadow-card:        0 1px 0 var(--rule-soft), 0 4px 12px -6px rgba(50, 60, 38, 0.12);
+  --shadow-card-hover:  0 1px 0 #e5dfc8, 0 12px 24px -10px rgba(50, 60, 38, 0.18);
+  --shadow-press:       0 1px 0 var(--rule-soft), 0 2px 6px -3px rgba(50, 60, 38, 0.12);
+  --shadow-modal:       0 24px 60px -20px rgba(42, 51, 38, 0.35), 0 1px 0 rgba(255,255,255,0.7) inset;
+  --shadow-header:      0 1px 0 var(--rule);
+
+  /* ── Motion ── */
+  --t-flip:          420ms;                       /* total flip = two halves   */
+  --t-flip-half:     210ms;
+  --t-flip-ease-in:  cubic-bezier(0.7, 0, 1, 1);  /* first half — accelerate   */
+  --t-flip-ease-out: cubic-bezier(0, 0, 0.3, 1);  /* second half — settle      */
+  --t-hover:      180ms;
+  --t-hover-ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --t-press:      120ms;
+  --t-modal:      220ms;
+  --t-modal-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --t-celebrate:      800ms;
+  --t-celebrate-ease: cubic-bezier(0.34, 1.56, 0.64, 1); /* gentle overshoot  */
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Reset / base
+   ═══════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--t-body);
+  line-height: 1.45;
+  font-feature-settings: 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  /* Subtle paper texture using two layered radial gradients —
+     pulls the cream background away from "flat" without being busy */
+  background-image:
+    radial-gradient(1200px 800px at 20% 0%, rgba(225, 164, 168, 0.05), transparent 60%),
+    radial-gradient(900px 700px at 100% 100%, rgba(201, 216, 181, 0.06), transparent 60%);
+}
+
+button { font: inherit; color: inherit; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   App scaffold
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* 32px of breathing room closes the page below the last card row. */
+.app { min-height: 100vh; padding-bottom: var(--s-8); }
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: color-mix(in oklab, var(--bg) 88%, transparent);
+  backdrop-filter: saturate(140%) blur(12px);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-5) var(--s-4) var(--s-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.header-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+.app-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--t-title);
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1;
+}
+.counter {
+  font-family: var(--font-body);
+  font-size: var(--t-small);
+  color: var(--ink-muted);
+  font-feature-settings: 'tnum';
+  white-space: nowrap;
+}
+.counter b { color: var(--ink); font-weight: 700; }
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.progress {
+  flex: 1;
+  height: 6px;
+  background: var(--rule);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+}
+.progress > span {
+  display: block;
+  height: 100%;
+  background: var(--blush);
+  border-radius: var(--r-pill);
+  transition: width 360ms var(--t-modal-ease);
+}
+
+.btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: var(--t-small);
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background var(--t-hover) var(--t-hover-ease),
+    border-color var(--t-hover) var(--t-hover-ease),
+    transform var(--t-press) var(--t-hover-ease);
+  white-space: nowrap;
+}
+.btn:hover { background: #fff; border-color: #d8d2bf; }
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: var(--blush);
+  color: #3a1e22;
+  border-color: transparent;
+  font-weight: 700;
+}
+.btn-primary:hover { background: var(--blush-deep); color: #fff; }
+
+.btn-ghost { background: transparent; border-color: transparent; color: var(--ink-muted); }
+.btn-ghost:hover { background: var(--rule-soft); color: var(--ink); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Card grid
+   ═══════════════════════════════════════════════════════════════════ */
+
+.grid-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-5) var(--s-4);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-3);
+}
+@media (min-width: 560px) { .grid { grid-template-columns: repeat(3, 1fr); gap: var(--s-4); } }
+@media (min-width: 820px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 1100px){ .grid { grid-template-columns: repeat(5, 1fr); } }
+
+/* The flip is a 2D squash: the visible face scales X to 0 (first half), then
+   the other face scales X from 0 to 1 (second half). Deliberately NO 3D
+   machinery (perspective / preserve-3d / backface-visibility / rotateY) —
+   those forced all 40 cards onto composited GPU layers, which blanked cards
+   during fast scrolling and window resizing. 2D keeps cards in normal paint
+   flow, so there is nothing left to blank.
+   Hover/press transforms live on the WRAPPER, flip transforms on the FACES —
+   different elements, so they compose instead of overwriting each other. */
+.card {
+  position: relative;
+  aspect-ratio: 1 / 1.16;
+  -webkit-tap-highlight-color: transparent;
+}
+.card-flip {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  transition: transform var(--t-hover) var(--t-hover-ease);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--s-4) var(--s-3) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  /* Base = the unpacked resting state; these transitions run when RETURNING
+     to unpacked: the front grows back during the second half. */
+  transform: scaleX(1);
+  transition:
+    box-shadow var(--t-hover) var(--t-hover-ease),
+    transform var(--t-flip-half) var(--t-flip-ease-out) var(--t-flip-half);
+}
+.face.back {
+  background: var(--packed-bg);
+  border-color: var(--packed-rule);
+  /* Unpacked rest: hidden at zero width; when unpacking it shrinks FIRST. */
+  transform: scaleX(0);
+  transition:
+    box-shadow var(--t-hover) var(--t-hover-ease),
+    transform var(--t-flip-half) var(--t-flip-ease-in);
+}
+/* Packing: front shrinks first, back grows second. */
+.card.packed .face.front {
+  transform: scaleX(0);
+  transition:
+    box-shadow var(--t-hover) var(--t-hover-ease),
+    transform var(--t-flip-half) var(--t-flip-ease-in);
+}
+.card.packed .face.back {
+  transform: scaleX(1);
+  transition:
+    box-shadow var(--t-hover) var(--t-hover-ease),
+    transform var(--t-flip-half) var(--t-flip-ease-out) var(--t-flip-half);
+}
+
+@media (hover: hover) {
+  /* :hover is detected on .card (which never moves) while the lift is applied
+     to .card-flip. Detecting hover on the lifted element itself makes it rise
+     out from under a cursor at the card's bottom edge, lose hover, drop, and
+     loop — a visible bounce. */
+  .card:not(.packed):hover .card-flip { transform: translateY(-2px); }
+  .card:not(.packed):hover .face.front { box-shadow: var(--shadow-card-hover); }
+}
+/* Press-shrink on the wrapper — both faces, no per-face compensation needed. */
+.card-flip:active { transform: scale(0.985); }
+
+.illu-slot {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-2);
+}
+.illu {
+  width: 70%;
+  height: 70%;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+  color: var(--ink);          /* feeds currentColor for small dots */
+}
+.illu .blush  { fill: var(--blush);  stroke: none; }
+.illu .sage   { fill: var(--sage);   stroke: none; }
+.illu .clay   { fill: var(--clay);   stroke: none; }
+
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-body);
+  line-height: 1.18;
+  color: var(--ink);
+  text-align: center;
+  text-wrap: pretty;
+  width: 100%;
+}
+.lbl {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+@media (min-width: 560px) {
+  .lbl { font-size: 15px; }
+}
+@media (min-width: 820px) {
+  .lbl { font-size: 16px; }
+}
+
+/* ── Packed face anatomy ── */
+.face.back .illu { stroke: var(--ink-muted); }
+.face.back .illu .blush  { fill: color-mix(in oklab, var(--blush)  35%, var(--packed-bg)); }
+.face.back .illu .sage   { fill: color-mix(in oklab, var(--sage)   45%, var(--packed-bg)); }
+.face.back .illu .clay   { fill: color-mix(in oklab, var(--clay)   55%, var(--packed-bg)); }
+.face.back .illu { opacity: 0.55; }
+.face.back .label { color: var(--ink-muted); }
+.face.back .lbl { color: var(--ink-muted); }
+
+.badge {
+  position: absolute;
+  top: var(--s-2);
+  right: var(--s-2);
+  font-family: var(--font-body);
+  font-size: var(--t-mini);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: var(--sage);
+  color: var(--sage-deep);
+  padding: 4px 9px 4px 8px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Modal — reset confirmation
+   ═══════════════════════════════════════════════════════════════════ */
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t-modal) var(--t-modal-ease);
+}
+.scrim.open { opacity: 1; pointer-events: auto; }
+
+.modal {
+  background: var(--surface-2);
+  border-radius: var(--r-xl);
+  padding: var(--s-6) var(--s-6) var(--s-5);
+  box-shadow: var(--shadow-modal);
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  transform: translateY(8px) scale(0.98);
+  transition: transform var(--t-modal) var(--t-modal-ease);
+}
+.scrim.open .modal { transform: translateY(0) scale(1); }
+
+.modal h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 0 0 var(--s-2);
+  line-height: 1.2;
+}
+.modal p {
+  margin: 0 0 var(--s-5);
+  color: var(--ink-muted);
+  font-size: var(--t-small);
+}
+.modal-actions {
+  display: flex;
+  gap: var(--s-3);
+}
+.modal-actions .btn { flex: 1; padding: 12px 18px; font-size: var(--t-body); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Celebration overlay
+   ═══════════════════════════════════════════════════════════════════ */
+
+.celebrate {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Same scrim treatment as the reset dialog — the packed grid behind the
+     banner otherwise reads as clutter, especially at phone sizes. */
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 260ms ease-out;
+}
+.celebrate.show { opacity: 1; pointer-events: auto; }
+
+.celebrate-banner {
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-xl);
+  padding: var(--s-6) var(--s-8);
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-3);
+  transform: translateY(20px) scale(0.92);
+  transition: transform var(--t-celebrate) var(--t-celebrate-ease);
+  position: relative;
+  z-index: 2;
+}
+.celebrate.show .celebrate-banner { transform: translateY(0) scale(1); }
+
+.celebrate-banner h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 36px;
+  letter-spacing: -0.01em;
+  margin: 0;
+  line-height: 1;
+}
+.celebrate-banner p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: var(--t-small);
+}
+.celebrate-banner .luggage { font-size: 40px; line-height: 1; margin-bottom: var(--s-1); }
+.celebrate-dismiss {
+  margin-top: var(--s-3);
+  pointer-events: auto;
+}
+
+/* Confetti — 36 falling pastel pieces (count set in JS) */
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.confetti i {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall 2.6s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+  opacity: 0;
+}
+.celebrate.show .confetti i { opacity: 1; }
+
+@keyframes confetti-fall {
+  0%   { transform: translate3d(0, -40px, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translate3d(var(--dx, 0px), 110vh, 0) rotate(540deg); opacity: 0.9; }
+}
+
+/* The overlay is only in the DOM while shown (D11), so the class-toggle
+   TRANSITIONS above never get a "from" frame to animate from. These
+   mount-time animations produce the same fade + lift-in (from/to match the
+   transition states). Suppressed by the reduced-motion block below. */
+.celebrate.show { animation: celebrate-fade 260ms ease-out; }
+.celebrate.show .celebrate-banner {
+  animation: celebrate-pop var(--t-celebrate) var(--t-celebrate-ease);
+}
+@keyframes celebrate-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes celebrate-pop {
+  from { transform: translateY(20px) scale(0.92); }
+  to   { transform: translateY(0) scale(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Keyboard focus ring
+   The design names --blush as the focus colour. :focus-visible shows the
+   on-brand ring for keyboard navigation only — not on mouse/touch clicks.
+
+   Cards: the ring is an INSET box-shadow painted on the faces, not an
+   outline around the wrapper. The wrapper's aspect-ratio box has a
+   fractional height, and the faces sit on a GPU-rasterized flip layer that
+   snaps to whole device pixels — an outline follows the fractional box and
+   could show a hairline gap + an uneven bottom stroke at some widths and
+   display scalings. Painted on the face raster itself, the ring is
+   pixel-attached at every width and scale.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.btn:focus-visible {
+  outline: 2px solid var(--blush);
+  outline-offset: 0;
+}
+
+/* Two buttons need the ring sat just OUTSIDE them, or it would merge into them:
+   the ghost button (transparent — the halo reads as its border) and the primary
+   button (blush fill, the same colour as the ring). */
+.btn-ghost:focus-visible,
+.btn-primary:focus-visible {
+  outline-offset: 3px;
+}
+
+.card:focus-visible { outline: none; }
+.card:focus-visible .face {
+  box-shadow: inset 0 0 0 2px var(--blush), var(--shadow-card);
+}
+/* Keep the ring while hovering a focused, unpacked card (the hover rule
+   otherwise outranks the focus rule and would blink the ring off). */
+.card:focus-visible:not(.packed) .card-flip:hover .face.front {
+  box-shadow: inset 0 0 0 2px var(--blush), var(--shadow-card-hover);
+}
+
+/* No ring for pointer-driven focus (e.g. clicking a card to pack it). */
+.btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Reduced motion
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0s !important; /* the flip's second half must not wait */
+  }
+}

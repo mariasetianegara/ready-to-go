@@ -1,10 +1,16 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import '@fontsource/dm-serif-display/400.css';
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/500.css';
+import '@fontsource/nunito/600.css';
+import '@fontsource/nunito/700.css';
+import '@fontsource/nunito/800.css';
+import './styles/styles.css';
+import App from './App';
 
-// Walking skeleton — proves the toolchain + CI → Pages pipeline end to end.
-// The real app replaces this entry in the next change.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <h1>Ready to Go</h1>
+    <App />
   </StrictMode>,
 );
